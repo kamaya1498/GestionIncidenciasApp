@@ -1,4 +1,4 @@
-mport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gestion_incidencias/main.dart';
 
 class UsrProfile extends StatelessWidget {
@@ -64,7 +64,7 @@ class UsrProfile extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(left: 50),
-                child: Text('Supervisor', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+                child: Text('Operador', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
               ),
             ],
           ),
