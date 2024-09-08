@@ -1,8 +1,5 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
-import 'lista_incidencias.dart'; // Importa la pantalla de lista de incidencias
-
+import 'registro_incidencias.dart';
 void main() {
   runApp(const MainApp());
 }
@@ -13,10 +10,13 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(), // Define la pantalla principal como HomeScreen
-    );
+      title:'Incidencias',
+      home: HomeScreen(),);
+
+    
   }
 }
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,15 +30,11 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Navega a la pantalla de lista de incidencias
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ListaIncidencias(),
-              ),
+              context,MaterialPageRoute(builder: (context) => const RegistroIncidencias() ),
             );
           },
-          child: const Text('Ver Incidencias'),
+          child: const Text('Registrar Incidencias'),
         ),
       ),
     );
