@@ -1,55 +1,42 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
+import 'registro_incidencias.dart';
+void main() {
+  runApp(const MainApp());
+}
 
-const primaryColor = Color.fromARGB(255, 207, 207, 207);
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
-void main() => runApp(
-  MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-    primaryColor: primaryColor,
-   ),
-    initialRoute: '/',
-    routes: {
-     '/': (context) => HomeScreen(),
-      '/profile': (context) => UsrProfile(),
-    },
-  ),
-);
-
-// class MainApp extends StatelessWidget {
-//   const MainApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: Scaffold(
-//         body: Center(
-//           child: Text('Hello World!'),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Menu'),
-        ),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
-            child: Text('User profile'),
-          ),
+      title:'Incidencias',
+      home: HomeScreen(),);
+
+    
+  }
+}
+
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,MaterialPageRoute(builder: (context) => const RegistroIncidencias() ),
+            );
+          },
+          child: const Text('Registrar Incidencias'),
         ),
       ),
     );
   }
 }
-

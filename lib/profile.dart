@@ -52,7 +52,11 @@ class UsrProfile extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(left: 50),
+
                 child: Text('Juan Alejandro Puentes', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+
+                child: Text('Pedro Picapiedra', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+
               ),
 
               Text(''), // TODO: Put a spacer here
@@ -64,7 +68,11 @@ class UsrProfile extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(left: 50),
+ 
                 child: Text('Operador', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+
+                child: Text('Supervisor', style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal)),
+ 
               ),
             ],
           ),
@@ -87,4 +95,3 @@ class UsrProfile extends StatelessWidget {
       )  
     );
   }
-}
