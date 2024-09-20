@@ -23,10 +23,10 @@ class CustomDrawer extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'NombreUsuario/a',  // Mostrar el nombre del usuario
+                      'Registro de incidencias',  // Mostrar el nombre del usuario
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 20,
                       ),
                     ),
                   ),
