@@ -18,7 +18,7 @@ class _RegistroIncidenciasState extends State<CrearIncidenciaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Incidencias'),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
