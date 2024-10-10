@@ -16,7 +16,7 @@ class CustomDrawer extends StatelessWidget {
             height: 100, // Altura reducida para el DrawerHeader
             child: DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,  // Color de fondo para el DrawerHeader
+                color:Color(0xFF204563),  // Color de fondo para el DrawerHeader
               ),
               child: Stack(
                 children: <Widget>[

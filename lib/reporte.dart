@@ -6,7 +6,8 @@ class ReporteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis incidencias'),
+        backgroundColor: Color(0xFF204563), // Color azul oscuro del AppBar
+        title: Text('Reporte de incidencias'),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -19,49 +20,84 @@ class ReporteScreen extends StatelessWidget {
         ),
       ),
       drawer: CustomDrawer(),  // Usar el widget Drawer personalizado
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
+      body: Column(
         children: [
-          // Ejemplo de tarjetas para cada incidencia
-          IncidenciaCard(
-            titulo: 'Título',
-            descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            ubicacion: 'San Salvador',
-            fecha: '01/11/2019',
-          ),
-          IncidenciaCard(
-            titulo: 'Título',
-            descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            ubicacion: 'San Salvador',
-            fecha: '01/11/2019',
-          ),
-          IncidenciaCard(
-            titulo: 'Título',
-            descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            ubicacion: 'San Salvador',
-            fecha: '01/11/2019',
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context); // Funcionalidad de volver atrás
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[300], // Color de fondo
-            foregroundColor: Colors.black, // Color del texto
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Bordes redondeados
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(8.0),
+              children: [
+                // Ejemplo de tarjetas para cada incidencia
+                IncidenciaCard(
+                  titulo: 'Título',
+                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ubicacion: 'Sucursal',
+                  fecha: '01/11/2019',
+                ),
+                IncidenciaCard(
+                  titulo: 'Título',
+                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ubicacion: 'Sucursal',
+                  fecha: '01/11/2019',
+                ),
+                IncidenciaCard(
+                  titulo: 'Título',
+                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                  ubicacion: 'Sucursal',
+                  fecha: '01/11/2019',
+                ),
+              ],
             ),
           ),
-          child: const Text('Volver'),
-        ),
+          
+          // Botón "Volver"
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Funcionalidad de volver atrás
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF204563),  // Azul oscuro
+                foregroundColor: Colors.white,  // Color del texto blanco
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30), // Bordes redondeados
+                ),
+                minimumSize: Size(double.infinity, 50), // Tamaño ancho y alto del botón
+              ),
+              child: const Text('Volver'),
+            ),
+          ),
+
+          // Texto de problemas técnicos
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: TextButton(
+              onPressed: () {
+                // Acción al presionar "Reportelo."
+              },
+              child: Text.rich(
+                TextSpan(
+                  text: '¿Tiene problemas técnicos? ',
+                  style: TextStyle(color: Colors.black),
+                  children: [
+                    TextSpan(
+                      text: 'Repórtelo.',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
 class IncidenciaCard extends StatelessWidget {
   final String titulo;
   final String descripcion;
@@ -80,30 +116,47 @@ class IncidenciaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        title: Text(
-          titulo,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(descripcion),
-            const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(ubicacion),
-                Text(fecha),
+                Text(
+                  titulo,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  ubicacion,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
               ],
             ),
+            SizedBox(height: 8),
+            Text(
+              descripcion,
+              style: const TextStyle(fontSize: 14),
+            ),
+            SizedBox(height: 8),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                fecha,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
           ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {
-            // Acción al presionar el botón de opciones (actualmente sin acción)
-          },
         ),
       ),
     );

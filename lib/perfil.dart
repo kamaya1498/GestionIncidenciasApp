@@ -42,7 +42,7 @@ class PerfilScreen extends StatelessWidget {
                 Container(
                   alignment: Alignment.center,// use aligment
                   child: Image.asset(
-                    'assets/perfil_default.png',
+                    'assets/images/perfil_default.png',
                     height: 130,
                     width: 130,
                     fit: BoxFit.cover,
