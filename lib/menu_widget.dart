@@ -1,30 +1,53 @@
 import 'package:flutter/material.dart';
-import 'crear_incidencia.dart';  // Importar el archivo para la pantalla de Crear Incidencia
-import 'reporte.dart';          // Importar el archivo para la pantalla de Reporte
-import 'perfil.dart';           // Importar el archivo para la pantalla de Perfil
+import 'package:shared_preferences/shared_preferences.dart';
+import 'crear_incidencia.dart';
+import 'reporte.dart';
+import 'perfil.dart';
 import 'main.dart';
-import 'home.dart';             // Importar el archivo para redirigir al login (main)
+import 'home.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({super.key});
+
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername(); // Cargar el nombre al iniciar el widget
+  }
+
+  Future<void> _loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('nombre') ?? 'Usuario'; // Valor por defecto
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          Container(
-            height: 100, // Altura reducida para el DrawerHeader
+          SizedBox(
+            height: 100, // Altura para el DrawerHeader
             child: DrawerHeader(
-              decoration: BoxDecoration(
-                color:Color(0xFF204563),  // Color de fondo para el DrawerHeader
+              decoration: const BoxDecoration(
+                color: Color(0xFF204563),
               ),
               child: Stack(
                 children: <Widget>[
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Registro de incidencias',  // Mostrar el nombre del usuario
-                      style: TextStyle(
+                      'Bienvenido, $username',  // Mostrar el nombre del usuario
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),
@@ -33,9 +56,9 @@ class CustomDrawer extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),  // Botón de cerrar con icono 'X'
+                      icon: const Icon(Icons.close, color: Colors.white),
                       onPressed: () {
-                        Navigator.pop(context);  // Cierra el Drawer
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -44,58 +67,58 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Inicio'),
+            leading: const Icon(Icons.home),
+            title: const Text('Inicio'),
             onTap: () {
-              Navigator.pop(context);  // Cierra el drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),  // Redirige a la pantalla Home
+                MaterialPageRoute(builder: (context) => HomeScreen(username: username)),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.add_circle_outline),
-            title: Text('Crear Incidencia'),
+            leading: const Icon(Icons.add_circle_outline),
+            title: const Text('Crear Incidencia'),
             onTap: () {
-              Navigator.pop(context);  // Cierra el drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CrearIncidenciaScreen()),  // Redirige a la pantalla Crear Incidencia
+                MaterialPageRoute(builder: (context) => CrearIncidenciaScreen()),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.report),
-            title: Text('Ver Reporte'),
+            leading: const Icon(Icons.report),
+            title: const Text('Ver Reporte'),
             onTap: () {
-              Navigator.pop(context);  // Cierra el drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ReporteScreen()),  // Redirige a la pantalla Reporte
+                MaterialPageRoute(builder: (context) => ReporteScreen()),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Perfil'),
+            leading: const Icon(Icons.person),
+            title: const Text('Perfil'),
             onTap: () {
-              Navigator.pop(context);  // Cierra el drawer
+              Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PerfilScreen()),  // Redirige a la pantalla Perfil
+                MaterialPageRoute(builder: (context) => PerfilScreen()),
               );
             },
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Cerrar sesión'),
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Cerrar sesión'),
             onTap: () {
-              Navigator.pop(context);  // Cierra el drawer
+              Navigator.pop(context);
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),  // Redirige a la pantalla Main (Login)
-                (Route<dynamic> route) => false,  // Elimina todas las rutas anteriores para evitar volver
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                (Route<dynamic> route) => false,
               );
             },
           ),
