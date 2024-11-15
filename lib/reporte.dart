@@ -1,98 +1,173 @@
 import 'package:flutter/material.dart';
-import 'menu_widget.dart';  // Importar el Drawer personalizado
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class ReporteScreen extends StatelessWidget {
+import 'menu_widget.dart'; // Importar el Drawer personalizado
+
+class ReporteScreen extends StatefulWidget {
+  const ReporteScreen({super.key});
+
+  @override
+  _ReporteScreenState createState() => _ReporteScreenState();
+}
+
+class _ReporteScreenState extends State<ReporteScreen> {
+  List<dynamic> incidencias = [];
+  bool isLoading = true;
+  bool isSupervisor = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserLevel(); // Verificar el nivel del usuario
+    fetchIncidencias(); // Cargar las incidencias al iniciar el widget
+  }
+
+  Future<void> checkUserLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? nivel = prefs.getString('nivel');
+    setState(() {
+      isSupervisor = nivel == 'Supervisor';
+    });
+  }
+
+  Future<void> fetchIncidencias() async {
+  final url = Uri.parse('https://url503.com/demoFlutter/incidencias.php');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body);
+    if (data['success'] == true) {
+      setState(() {
+        // Filtrar solo las incidencias con estado "Activa"
+        incidencias = data['data'].where((incidencia) => incidencia['estado'] == 'Activa').toList();
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? 'Error al cargar incidencias')),
+      );
+    }
+  } else {
+    setState(() {
+      isLoading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error en la conexión con la API')),
+    );
+  }
+}
+
+Future<void> markAsResolved(String idIncidencia) async {
+  final url = Uri.parse('https://url503.com/demoFlutter/incidencias.php?id=$idIncidencia');
+  final response = await http.put(url, body: {
+    'estado': 'Resuelta',
+  });
+
+  final Map<String, dynamic> data = json.decode(response.body);
+
+  if (response.statusCode == 200 && data['success'] == true) {
+    setState(() {
+      incidencias.removeWhere((incidencia) => incidencia['id_incidencia'] == idIncidencia);
+    });
+    Navigator.of(context).pop(); // Cerrar el popup
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(data['message'] ?? 'Incidencia marcada como resuelta')),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(data['message'] ?? 'Error al marcar como resuelta')),
+    );
+  }
+}
+
+  void showIncidenciaDetails(Map<String, dynamic> incidencia) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(incidencia['tipo_incidencia'] ?? 'Sin título'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Descripción: ${incidencia['descripcion'] ?? 'Sin descripción'}'),
+              Text('Sucursal: ${incidencia['sucursal'] ?? 'Sin sucursal'}'),
+              Text('Fecha: ${incidencia['fecha'] ?? 'Sin fecha'}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cerrar'),
+            ),
+            if (isSupervisor)
+              ElevatedButton(
+                onPressed: () => markAsResolved(incidencia['id_incidencia']),
+                child: const Text('Marcar como Resuelta'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF204563), // Color azul oscuro del AppBar
-        title: Text('Reporte de incidencias'),
+        backgroundColor: const Color(0xFF204563), // Color azul oscuro del AppBar
+        title: const Text('Reporte de incidencias'),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               onPressed: () {
-                Scaffold.of(context).openDrawer();  // Abre el menú de hamburguesa
+                Scaffold.of(context).openDrawer(); // Abre el menú de hamburguesa
               },
             );
           },
         ),
       ),
-      drawer: CustomDrawer(),  // Usar el widget Drawer personalizado
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
+      drawer: CustomDrawer(), // Usar el widget Drawer personalizado
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator()) // Indicador de carga
+          : ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              children: [
-                // Ejemplo de tarjetas para cada incidencia
-                IncidenciaCard(
-                  titulo: 'Título',
-                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                  ubicacion: 'Sucursal',
-                  fecha: '01/11/2019',
-                ),
-                IncidenciaCard(
-                  titulo: 'Título',
-                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                  ubicacion: 'Sucursal',
-                  fecha: '01/11/2019',
-                ),
-                IncidenciaCard(
-                  titulo: 'Título',
-                  descripcion: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                  ubicacion: 'Sucursal',
-                  fecha: '01/11/2019',
-                ),
-              ],
-            ),
-          ),
-          
-          // Botón "Volver"
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Funcionalidad de volver atrás
+              itemCount: incidencias.length,
+              itemBuilder: (context, index) {
+                final incidencia = incidencias[index];
+                return InkWell(
+                  onTap: () => showIncidenciaDetails(incidencia),
+                  child: IncidenciaCard(
+                    titulo: incidencia['tipo_incidencia'] ?? 'Sin título',
+                    descripcion: incidencia['descripcion'] ?? 'Sin descripción',
+                    ubicacion: incidencia['sucursal'] ?? 'Sin sucursal',
+                    fecha: incidencia['fecha'] ?? 'Sin fecha',
+                  ),
+                );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF204563),  // Azul oscuro
-                foregroundColor: Colors.white,  // Color del texto blanco
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30), // Bordes redondeados
-                ),
-                minimumSize: Size(double.infinity, 50), // Tamaño ancho y alto del botón
-              ),
-              child: const Text('Volver'),
             ),
-          ),
-
-          // Texto de problemas técnicos
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: TextButton(
-              onPressed: () {
-                // Acción al presionar "Reportelo."
-              },
-              child: Text.rich(
-                TextSpan(
-                  text: '¿Tiene problemas técnicos? ',
-                  style: TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                      text: 'Repórtelo.',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      // Botón "Volver"
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context); // Funcionalidad de volver atrás
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF204563), // Azul oscuro
+            foregroundColor: Colors.white, // Color del texto blanco
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30), // Bordes redondeados
             ),
+            minimumSize: const Size(double.infinity, 50), // Tamaño ancho y alto del botón
           ),
-        ],
+          child: const Text('Volver'),
+        ),
       ),
     );
   }
@@ -140,12 +215,12 @@ class IncidenciaCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               descripcion,
               style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
